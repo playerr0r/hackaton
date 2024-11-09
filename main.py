@@ -7,6 +7,7 @@ import shutil
 from typing import List
 from test import initialize_model, process_image  # Ваши функции для инициализации модели и обработки изображений
 import csv
+from fastapi.responses import FileResponse
 from PIL import Image
 
 app = FastAPI()
@@ -142,3 +143,14 @@ def add_to_csv(filename, detections):
                 'BBox': f'{xc:.6f},{yc:.6f},{w:.6f},{h:.6f}',  # Формат xcycwh
                 'Class': 1 if detection["class"] else 0  # Преобразуем True/False в 1/0
             })
+
+
+@app.get("/download/csv")
+async def download_csv():
+    # Проверяем, существует ли файл
+    csv_file = "output.csv"
+    if os.path.exists(csv_file):
+        # Отправляем файл с заголовком для скачивания
+        return FileResponse(csv_file, media_type='text/csv', headers={"Content-Disposition": "attachment; filename=output.csv"})
+    else:
+        return JSONResponse(status_code=404, content={"message": "File not found"})

@@ -1,17 +1,18 @@
-// Получение минимальных значений ширины и высоты bbox от пользователя
+let currentPage = 1;
+const photosPerPage = 40;
+
 function getBboxSizeInputs() {
   const minWidth = parseInt(document.getElementById("minWidth").value, 10);
   const minHeight = parseInt(document.getElementById("minHeight").value, 10);
   return { minWidth, minHeight };
 }
 
-// Загрузка изображений на сервер
 async function uploadImages(files) {
   const formData = new FormData();
-  files.forEach(file => formData.append("files", file)); // Используем "files" в соответствии с API
+  files.forEach(file => formData.append("files", file));
 
   try {
-    const response = await fetch("http://localhost:8000/upload/", { // Проверьте, что URL и метод правильные
+    const response = await fetch("http://localhost:8000/upload/", {
       method: "POST",
       body: formData,
     });
@@ -19,7 +20,7 @@ async function uploadImages(files) {
     if (response.ok) {
       const data = await response.json();
       const filenames = data.filenames;
-      filenames.forEach(filename => processImage(filename)); // Обрабатываем каждое загруженное изображение
+      filenames.forEach(filename => processImage(filename));
     } else {
       alert("Ошибка при загрузке файлов");
     }
@@ -28,13 +29,12 @@ async function uploadImages(files) {
   }
 }
 
-// Обработка изображения на сервере для детекции животных
 async function processImage(filename) {
   try {
     const response = await fetch(`http://localhost:8000/process/${filename}`);
     if (response.ok) {
       const data = await response.json();
-      displayImageData(data); // Отображаем данные о детекции на фронтенде
+      displayImageData(data);
     } else {
       alert("Ошибка при обработке изображения");
     }
@@ -43,20 +43,17 @@ async function processImage(filename) {
   }
 }
 
-// Отображение данных об изображении
 function displayImageData(data) {
   const { filename, detections } = data;
   const hasAnimal = detections.some(d => d.has_animal);
   const { minWidth, minHeight } = getBboxSizeInputs();
 
-  // Создаем элемент для миниатюры
   const img = document.createElement("img");
   img.src = `/output/${filename}`;
   img.alt = filename;
   img.classList.add("thumbnail");
   img.addEventListener("click", () => displayImage(img.src));
 
-  // Добавляем в соответствующую вкладку в зависимости от наличия животного
   if (!hasAnimal) {
     return;
   }
@@ -66,35 +63,44 @@ function displayImageData(data) {
     d.bbox[2] >= minWidth && d.bbox[3] >= minHeight
   );
 
-  if (isGoodAnimalWithValidBbox) {
-    document.getElementById("goodViewPhotos").appendChild(img);
-  } else {
-    document.getElementById("badViewPhotos").appendChild(img);
-  }
+  const containerId = isGoodAnimalWithValidBbox ? "goodViewPhotos" : "badViewPhotos";
+  const container = document.getElementById(containerId);
+  container.appendChild(img);
 }
 
-// Функция для отображения изображения в главном окне
 function displayImage(src) {
   const mainDisplay = document.getElementById("mainDisplay");
   mainDisplay.innerHTML = `<img src="${src}" alt="Выбранное изображение">`;
 }
 
-// Запрос на загрузку файлов при нажатии кнопки
-document.getElementById("uploadButton").addEventListener("click", () => {
-  document.getElementById("goodViewPhotos").innerHTML = "";
-  document.getElementById("badViewPhotos").innerHTML = "";
+document.getElementById("fileInput").addEventListener("change", function() {
+  const fileButton = document.getElementById("customFileButton");
+  if (this.files.length > 0) {
+    fileButton.textContent = "Файлы выбраны";
+  } else {
+    fileButton.textContent = "Выбрать файлы";
+  }
+});
 
+document.getElementById("uploadButton").addEventListener("click", () => {
   const files = document.getElementById("fileInput").files;
   if (files.length > 0) {
     uploadImages(Array.from(files));
   }
 });
 
-// Функция переключения вкладок
 function openTab(tabName) {
-  const tabContents = document.getElementsByClassName("tab-content");
-  for (let i = 0; i < tabContents.length; i++) {
-    tabContents[i].style.display = "none";
-  }
-  document.getElementById(tabName).style.display = "block";
+    const tabContents = document.getElementsByClassName("tab-content");
+    for (let i = 0; i < tabContents.length; i++) {
+      tabContents[i].style.display = "none";
+    }
+    document.getElementById(tabName).style.display = "block";
 }
+
+document.getElementById("downloadButton").addEventListener("click", () => {
+  // отправить запрос на скачивание файла output.csv с сервера
+  const downloadLink = document.createElement("a");
+  downloadLink.href = "http://localhost:8000/download/csv";  // Используем новый эндпоинт для скачивания
+  downloadLink.download = "output.csv";  // Имя файла, который будет сохранен
+  downloadLink.click();  // Инициируем скачивание
+});

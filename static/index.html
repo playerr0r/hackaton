@@ -8,34 +8,33 @@
 </head>
 <body>
 
-  <!-- Основной контейнер -->
   <div class="container">
+    <div class="layout">
+      <!-- Левая колонка с панелью управления -->
+      <div class="control-panel">
+        <!-- Кнопка выбора файла -->
+        <button id="customFileButton" onclick="document.getElementById('fileInput').click()">Выбрать файлы</button>
+        <input type="file" id="fileInput" multiple accept="image/*" webkitdirectory style="display: none;">
 
-    <!-- Панель загрузки фотографий -->
-    <div class="upload-panel">
-      <input type="file" id="fileInput" multiple accept="image/*" webkitdirectory>
-      <button id="uploadButton">Загрузить</button>
-      <button id="downloadButton">Выгрузить</button>
-    </div>
+        <!-- Кнопки загрузки и выгрузки -->
+        <div class="upload-buttons">
+          <button id="uploadButton">Загрузить</button>
+          <button id="downloadButton">Выгрузить</button>
+        </div>
 
-    <!-- Поля для ввода минимальных размеров bbox -->
-    <div class="bbox-settings">
-      <label>Минимальная ширина bbox (px):
-        <input type="number" id="minWidth" value="128">
-      </label>
-      <label>Минимальная высота bbox (px):
-        <input type="number" id="minHeight" value="128">
-      </label>
-    </div>
+        <!-- Поля для ввода минимальных размеров bbox -->
+        <div class="bbox-settings">
+          <label>Минимальные значения ШxВ:
+            <input type="number" id="minWidth" value="128" placeholder="Ширина">
+            <input type="number" id="minHeight" value="128" placeholder="Высота">
+          </label>
+        </div>
+      </div>
 
-    <!-- Прогресс загрузки -->
-    <div id="progressBarContainer" class="progress-bar-container">
-      <div id="progressBar" class="progress-bar"></div>
-    </div>
-
-    <!-- Область для отображения выбранного изображения -->
-    <div id="mainDisplay" class="main-display">
-      <p>Выберите фотографию снизу для просмотра в большем масштабе</p>
+      <!-- Правая колонка с основным дисплеем -->
+      <div id="mainDisplay" class="main-display">
+        <p>Выберите фотографию снизу для просмотра в большем масштабе</p>
+      </div>
     </div>
 
     <!-- Вкладки для сортировки фотографий -->
@@ -46,23 +45,15 @@
 
     <!-- Контейнер для миниатюр с хорошим видом -->
     <div id="goodView" class="tab-content">
-      <h2>Хороший вид</h2>
       <div id="goodViewPhotos" class="photo-thumbnails"></div>
     </div>
 
     <!-- Контейнер для миниатюр с плохим видом -->
     <div id="badView" class="tab-content" style="display:none;">
-      <h2>Плохой вид</h2>
       <div id="badViewPhotos" class="photo-thumbnails"></div>
     </div>
-
   </div>
 
   <script src="/static/script.js"></script> <!-- Подключение JavaScript для функциональности -->
 </body>
 </html>
-
-
-
-
-
