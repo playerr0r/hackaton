@@ -81,6 +81,9 @@ function displayImage(src) {
 
 // Запрос на загрузку файлов при нажатии кнопки
 document.getElementById("uploadButton").addEventListener("click", () => {
+  document.getElementById("goodViewPhotos").innerHTML = "";
+  document.getElementById("badViewPhotos").innerHTML = "";
+
   const files = document.getElementById("fileInput").files;
   if (files.length > 0) {
     uploadImages(Array.from(files));

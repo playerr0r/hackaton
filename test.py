@@ -7,7 +7,6 @@ import numpy as np
 # Путь к вашей обученной модели
 model_path = 'yolov5\\models\\best.pt'  # Укажите путь к вашему файлу best.pt
 
-# Устанавливаем путь для Windows
 temp = pathlib.PosixPath
 pathlib.PosixPath = pathlib.WindowsPath
 
@@ -25,9 +24,8 @@ def initialize_model() -> None:
     else:
         print("Using CPU for computations")
 
-    # Загрузка кастомной модели YOLOv5
     detection_model = torch.hub.load('yolov5', 'custom', path=model_path, force_reload=True, source='local')
-    detection_model.eval()  # Переводим модель в режим инференса (предсказания)
+    detection_model.eval()
     print("YOLOv5 model initialized.")
 
 def process_image(tgt_img_path: str) -> np.ndarray:
